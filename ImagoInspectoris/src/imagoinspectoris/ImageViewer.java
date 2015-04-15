@@ -24,43 +24,43 @@ public class ImageViewer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane = new javax.swing.JScrollPane();
+        picViewer = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu = new javax.swing.JMenu();
-        jMI_Open = new javax.swing.JMenuItem();
-        jMI_Clear = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        fileMenu = new javax.swing.JMenu();
+        fileMenu_Open = new javax.swing.JMenuItem();
+        fileMenu_Clear = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        helpMenu = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu.setText("File");
+        fileMenu.setText("File");
 
-        jMI_Open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
-        jMI_Open.setText("Open");
-        jMI_Open.addActionListener(new java.awt.event.ActionListener() {
+        fileMenu_Open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_MASK));
+        fileMenu_Open.setText("Open");
+        fileMenu_Open.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMI_OpenActionPerformed(evt);
+                fileMenu_OpenActionPerformed(evt);
             }
         });
-        jMenu.add(jMI_Open);
+        fileMenu.add(fileMenu_Open);
 
-        jMI_Clear.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
-        jMI_Clear.setText("Clear");
-        jMI_Clear.addActionListener(new java.awt.event.ActionListener() {
+        fileMenu_Clear.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        fileMenu_Clear.setText("Clear");
+        fileMenu_Clear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMI_ClearActionPerformed(evt);
+                fileMenu_ClearActionPerformed(evt);
             }
         });
-        jMenu.add(jMI_Clear);
+        fileMenu.add(fileMenu_Clear);
 
-        jMenuBar1.add(jMenu);
+        jMenuBar1.add(fileMenu);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        editMenu.setText("Edit");
+        jMenuBar1.add(editMenu);
 
-        jMenu3.setText("Help");
-        jMenuBar1.add(jMenu3);
+        helpMenu.setText("Help");
+        jMenuBar1.add(helpMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -68,34 +68,34 @@ public class ImageViewer extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(picViewer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+            .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
     JLabel jlab = new JLabel();
     
-    private void jMI_OpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMI_OpenActionPerformed
+    private void fileMenu_OpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileMenu_OpenActionPerformed
         JFileChooser jfc = new JFileChooser();
         
-        if(jfc.showOpenDialog(jMenu) == JFileChooser.APPROVE_OPTION){
+        if(jfc.showOpenDialog(fileMenu) == JFileChooser.APPROVE_OPTION){
             java.io.File f = jfc.getSelectedFile();
             
             jlab.setIcon(new ImageIcon(f.toString()));
             
             jlab.setHorizontalAlignment(JLabel.CENTER);
             
-            jScrollPane.getViewport().add(jlab);
+            picViewer.getViewport().add(jlab);
         }
-    }//GEN-LAST:event_jMI_OpenActionPerformed
+    }//GEN-LAST:event_fileMenu_OpenActionPerformed
 
-    private void jMI_ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMI_ClearActionPerformed
+    private void fileMenu_ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileMenu_ClearActionPerformed
         jlab.setIcon(null);
-    }//GEN-LAST:event_jMI_ClearActionPerformed
+    }//GEN-LAST:event_fileMenu_ClearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -133,12 +133,12 @@ public class ImageViewer extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem jMI_Clear;
-    private javax.swing.JMenuItem jMI_Open;
-    private javax.swing.JMenu jMenu;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem fileMenu_Clear;
+    private javax.swing.JMenuItem fileMenu_Open;
+    private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JScrollPane picViewer;
     // End of variables declaration//GEN-END:variables
 }

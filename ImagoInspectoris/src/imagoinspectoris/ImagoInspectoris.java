@@ -8,38 +8,38 @@ package imagoinspectoris;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.ImageIO;
 
 /**
  *
  * @author Ni9w4Ns
  */
-public class ImagoInspectoris extends JFrame implements ActionListener {
-
-    private JPanel topPanel;
-    private JMenuBar menuBar;
-    private JMenu menuFile, menuEdit, menuHelp;
-    private JMenuItem menuFileOpen, menuFileSave, menuFileSaveAs, menuFileExit, menuHelpManual,
-            menuHelpAbout, menuFileClear;
-    private JLabel picViewer;
-    private JScrollPane scrollBar;
-
+public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionListener {
+     
     public ImagoInspectoris() {
         Components();
     }
-
+    @SuppressWarnings("unchecked")
     private void Components() {
-        setTitle("Imago Inspectoris v1.0");
-        setSize(310, 130);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        JLabel picViewer = new JLabel();
-        JScrollPane scrollBar = new JScrollPane();
 
-        topPanel = new JPanel();
-        topPanel.setLayout(new BorderLayout());
-        add(topPanel);
+        // set up the viewer itself with alingment for the various parts
+        picViewer = new JScrollPane();
+        
+        setTitle("Imago Inspectoris v1.0");
+        setSize(350, 350);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+   
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(picViewer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+        );
+
+        pack();
 
         menuBar = new JMenuBar();
 
@@ -51,6 +51,7 @@ public class ImagoInspectoris extends JFrame implements ActionListener {
 
         menuFileOpen = CreateMenuItem(menuFile, 0, "Open", null, KeyEvent.VK_O, "Open a new file");
         menuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuFileOpen_actionPerformed(evt);
             }
@@ -60,6 +61,7 @@ public class ImagoInspectoris extends JFrame implements ActionListener {
         menuFile.addSeparator();
         menuFileClear = CreateMenuItem(menuFile, 0, "Clear", null, KeyEvent.VK_C, "Clear the current file");
         menuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuFileClear_actionPerformed(evt);
             }
@@ -121,22 +123,25 @@ public class ImagoInspectoris extends JFrame implements ActionListener {
     }
 
     //Action Listeners for each button in the menus
-    private void menuFileOpen_actionPerformed(ActionEvent evt) {
+    
+    JLabel jlab = new JLabel();
+    
+    private void menuFileOpen_actionPerformed(java.awt.event.ActionEvent evt) {
         JFileChooser jfc = new JFileChooser();
-
-        if (jfc.showOpenDialog(menuFileOpen) == JFileChooser.APPROVE_OPTION) {
+        
+        if(jfc.showOpenDialog(menuFile) == JFileChooser.APPROVE_OPTION){
             java.io.File f = jfc.getSelectedFile();
-
-            picViewer.setIcon(new ImageIcon(f.toString()));
-
-            picViewer.setHorizontalAlignment(JLabel.CENTER);
-
-            scrollBar.getViewport().add(picViewer);
+            
+            jlab.setIcon(new ImageIcon(f.toString()));
+            
+            jlab.setHorizontalAlignment(JLabel.CENTER);
+            
+            picViewer.getViewport().add(jlab);
         }
-    }
+    }    
 
-    private void menuFileClear_actionPerformed(ActionEvent evt) {
-        picViewer.setIcon(null);
+    private void menuFileClear_actionPerformed(java.awt.event.ActionEvent evt) {
+        jlab.setIcon(null);
     }
 //Main
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -147,19 +152,19 @@ public class ImagoInspectoris extends JFrame implements ActionListener {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex){
+        } catch (ClassNotFoundException ex){ //Error handling 
             System.out.println("Look and feel not found!");
-            
-            //TODO: Set this to revert to default look and feel
         }
         
         //Instantiates the ImagoInspectoris class and displays the frame
         ImagoInspectoris mainFrame = new ImagoInspectoris();
         mainFrame.setVisible(true);
     }
-
-    //@Override
-    //public void actionPerformed(ActionEvent ae) {
-    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    //}
+    
+    private JPanel topPanel;
+    private JMenuBar menuBar;
+    private JMenu menuFile, menuEdit, menuHelp;
+    private JMenuItem menuFileOpen, menuFileSave, menuFileSaveAs, menuFileExit, menuHelpManual,
+            menuHelpAbout, menuFileClear;
+    private JScrollPane picViewer;
 }
