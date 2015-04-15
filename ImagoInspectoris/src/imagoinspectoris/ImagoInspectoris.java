@@ -8,38 +8,53 @@ package imagoinspectoris;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.GroupLayout.*;
+import javax.swing.border.*;
 
 /**
  *
  * @author Ni9w4Ns
  */
-public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionListener {
+public class ImagoInspectoris extends javax.swing.JFrame{
+    private Component frame;
+// implements ActionListener {
      
     public ImagoInspectoris() {
         Components();
     }
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     private void Components() {
 
         // set up the viewer itself with alingment for the various parts
         picViewer = new JScrollPane();
+        treeViewer = new JScrollPane();
+        tagTree = new JTree();
         
         setTitle("Imago Inspectoris v1.0");
-        setSize(350, 350);
+        setSize(850, 650);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        //initialise the tree
+        tagTree.setBorder(new MatteBorder(null));
+        treeViewer.setViewportView(tagTree);
    
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(picViewer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+            layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(treeViewer, GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(picViewer, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 304, Short.MAX_VALUE)
+            layout.createParallelGroup(Alignment.LEADING)
+            .addComponent(picViewer)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(treeViewer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, 
+                GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
-
-        pack();
 
         menuBar = new JMenuBar();
 
@@ -50,9 +65,9 @@ public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionLis
         menuFile.setMnemonic(KeyEvent.VK_F);
 
         menuFileOpen = CreateMenuItem(menuFile, 0, "Open", null, KeyEvent.VK_O, "Open a new file");
-        menuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+        menuFileOpen.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 menuFileOpen_actionPerformed(evt);
             }
         });
@@ -60,30 +75,45 @@ public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionLis
         menuFileSaveAs = CreateMenuItem(menuFile, 0, "Save As... ", null, KeyEvent.VK_A, "Choose where to save the current file");
         menuFile.addSeparator();
         menuFileClear = CreateMenuItem(menuFile, 0, "Clear", null, KeyEvent.VK_C, "Clear the current file");
-        menuFileOpen.addActionListener(new java.awt.event.ActionListener() {
+        menuFileClear.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 menuFileClear_actionPerformed(evt);
             }
         });
         menuFileExit = CreateMenuItem(menuFile, 0, "Exit", null, KeyEvent.VK_E, "Exit the program");
-
+        menuFileExit.addActionListener(new java.awt.event.ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent evt){
+                menuFileExit_actionPerformed(evt);
+            }
+        });
+        
         menuBar.add(menuFile);
 
         //The Edit Menu
         menuEdit = new JMenu("Edit");
         menuEdit.setMnemonic(KeyEvent.VK_E);
-
+        
+        menuEditAdd = CreateMenuItem(menuEdit, 0, "Add Tag", null, KeyEvent.VK_A, "Add a tag to the current image");
+        menuEditChange = CreateMenuItem(menuEdit, 0, "Change Tag", null, KeyEvent.VK_C, "Change a current tag");
+        menuEditDelete = CreateMenuItem(menuEdit, 0, "Delete Tag", null, KeyEvent.VK_D, "Delete an existing tag");
+        
         menuBar.add(menuEdit);
 
-    //TODO: populate Edit Menu
+    
         //The Help Menu
         menuHelp = new JMenu("Help");
         menuHelp.setMnemonic(KeyEvent.VK_H);
 
         menuHelpManual = CreateMenuItem(menuHelp, 0, "Manual", null, KeyEvent.VK_M, "View user Manual");
         menuHelpAbout = CreateMenuItem(menuHelp, 0, "About", null, KeyEvent.VK_A, "View version information");
-
+        menuHelpAbout.addActionListener(new java.awt.event.ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent evt){
+                menuHelpAbout_actionPerformed(evt);
+        }     
+    });
         menuBar.add(menuHelp);
     }
 
@@ -139,9 +169,19 @@ public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionLis
             picViewer.getViewport().add(jlab);
         }
     }    
+    private void menuFileExit_actionPerformed(ActionEvent evt) {
+        System.exit(0);
+    }
 
-    private void menuFileClear_actionPerformed(java.awt.event.ActionEvent evt) {
+    private void menuFileClear_actionPerformed(ActionEvent evt) {
         jlab.setIcon(null);
+    }
+    
+    private void menuHelpAbout_actionPerformed(ActionEvent evt){
+        JOptionPane verisonInfo = new JOptionPane();
+        versionInfo.showMessageDialog(frame, "Imago Inspectoris\n"
+                + "Version 1.0\n"
+                + "Published 24/04/2015 by 0506344");
     }
 //Main
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
@@ -160,11 +200,14 @@ public class ImagoInspectoris extends javax.swing.JFrame{// implements ActionLis
         ImagoInspectoris mainFrame = new ImagoInspectoris();
         mainFrame.setVisible(true);
     }
-    
+    //declarations
     private JPanel topPanel;
     private JMenuBar menuBar;
     private JMenu menuFile, menuEdit, menuHelp;
     private JMenuItem menuFileOpen, menuFileSave, menuFileSaveAs, menuFileExit, menuHelpManual,
-            menuHelpAbout, menuFileClear;
-    private JScrollPane picViewer;
+            menuHelpAbout, menuFileClear, menuEditAdd, menuEditDelete, menuEditChange;
+    private JScrollPane picViewer, treeViewer;
+    private JOptionPane versionInfo;
+    private JTree tagTree;
+
 }
