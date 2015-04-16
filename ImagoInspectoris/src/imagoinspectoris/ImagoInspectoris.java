@@ -1,60 +1,55 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package imagoinspectoris;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.*;
-import javax.swing.border.*;
 
-/**
- *
- * @author Ni9w4Ns
+ /*
+ * @author 0506344
  */
-public class ImagoInspectoris extends javax.swing.JFrame{
+public class ImagoInspectoris extends javax.swing.JFrame {
+
     private Component frame;
 // implements ActionListener {
-     
+
     public ImagoInspectoris() {
         Components();
     }
-    //@SuppressWarnings("unchecked")
+
     private void Components() {
 
-        // set up the viewer itself with alingment for the various parts
+        // set up the viewer itself with alignment for the various parts
         picViewer = new JScrollPane();
-        treeViewer = new JScrollPane();
-        tagTree = new JTree();
-        
+        tagTree = new tagTree();
+        treeViewer = new JScrollPane(tagTree.tree);
+
+
         setTitle("Imago Inspectoris v1.0");
         setSize(850, 650);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        //initialise the tree
-        tagTree.setBorder(new MatteBorder(null));
-        treeViewer.setViewportView(tagTree);
-   
+
+        //initialise the tree viewer
+        treeViewer.setViewportView(tagTree.tree);
+
+
+        //set the layout
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(treeViewer, GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(picViewer, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE))
-        );
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(treeViewer, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(picViewer, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
         layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addComponent(picViewer)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(treeViewer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, 
-                GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(picViewer)
+                .addComponent(treeViewer));
+
+        pack();
+
+        //set up the menu bar
 
         menuBar = new JMenuBar();
 
@@ -71,7 +66,21 @@ public class ImagoInspectoris extends javax.swing.JFrame{
                 menuFileOpen_actionPerformed(evt);
             }
         });
-        menuFileSave = CreateMenuItem(menuFile, 0, "Save", null, KeyEvent.VK_S, "Save the current file");
+        menuFileSaveTree = CreateMenuItem(menuFile, 0, "Save Tree", null, KeyEvent.VK_S, "Save the current tags");
+        menuFileSaveTree.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuFileSaveTree_actionPerformed(evt);
+            }
+        });
+        
+        menuFileLoadTree = CreateMenuItem(menuFile, 0, "Load Tree", null, KeyEvent.VK_L, "Load saved tags");
+        menuFileLoadTree.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuFileLoadTree_actionPerformed(evt);
+            }
+        });
         menuFileSaveAs = CreateMenuItem(menuFile, 0, "Save As... ", null, KeyEvent.VK_A, "Choose where to save the current file");
         menuFile.addSeparator();
         menuFileClear = CreateMenuItem(menuFile, 0, "Clear", null, KeyEvent.VK_C, "Clear the current file");
@@ -82,38 +91,50 @@ public class ImagoInspectoris extends javax.swing.JFrame{
             }
         });
         menuFileExit = CreateMenuItem(menuFile, 0, "Exit", null, KeyEvent.VK_E, "Exit the program");
-        menuFileExit.addActionListener(new java.awt.event.ActionListener(){
+        menuFileExit.addActionListener(new java.awt.event.ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt) {
                 menuFileExit_actionPerformed(evt);
             }
         });
-        
+
         menuBar.add(menuFile);
 
         //The Edit Menu
         menuEdit = new JMenu("Edit");
         menuEdit.setMnemonic(KeyEvent.VK_E);
-        
+
         menuEditAdd = CreateMenuItem(menuEdit, 0, "Add Tag", null, KeyEvent.VK_A, "Add a tag to the current image");
-        menuEditChange = CreateMenuItem(menuEdit, 0, "Change Tag", null, KeyEvent.VK_C, "Change a current tag");
+        menuEditAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuEditAdd_actionPerformed(evt);
+
+            }
+        });
         menuEditDelete = CreateMenuItem(menuEdit, 0, "Delete Tag", null, KeyEvent.VK_D, "Delete an existing tag");
+        menuEditDelete.addActionListener(new ActionListener(){
+          @Override
+          public void actionPerformed(ActionEvent evt) {
+              menuEditChange_actionPerformed(evt);
+          }
+        });
         
         menuBar.add(menuEdit);
 
-    
+
         //The Help Menu
         menuHelp = new JMenu("Help");
         menuHelp.setMnemonic(KeyEvent.VK_H);
 
         menuHelpManual = CreateMenuItem(menuHelp, 0, "Manual", null, KeyEvent.VK_M, "View user Manual");
         menuHelpAbout = CreateMenuItem(menuHelp, 0, "About", null, KeyEvent.VK_A, "View version information");
-        menuHelpAbout.addActionListener(new java.awt.event.ActionListener(){
+        menuHelpAbout.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent evt){
+            public void actionPerformed(ActionEvent evt) {
                 menuHelpAbout_actionPerformed(evt);
-        }     
-    });
+            }
+        });
         menuBar.add(menuHelp);
     }
 
@@ -146,43 +167,58 @@ public class ImagoInspectoris extends javax.swing.JFrame{
         if (sToolTip != null) {
             menuItem.setToolTipText(sToolTip);
         }
-        //menuItem.addActionListener(this);
         menu.add(menuItem);
 
         return menuItem;
     }
-
     //Action Listeners for each button in the menus
-    
     JLabel jlab = new JLabel();
-    
-    private void menuFileOpen_actionPerformed(java.awt.event.ActionEvent evt) {
+
+    private void menuFileOpen_actionPerformed(ActionEvent evt) {
         JFileChooser jfc = new JFileChooser();
-        
-        if(jfc.showOpenDialog(menuFile) == JFileChooser.APPROVE_OPTION){
+
+        if (jfc.showOpenDialog(menuFile) == JFileChooser.APPROVE_OPTION) {
             java.io.File f = jfc.getSelectedFile();
-            
+
             jlab.setIcon(new ImageIcon(f.toString()));
-            
+
             jlab.setHorizontalAlignment(JLabel.CENTER);
-            
+
             picViewer.getViewport().add(jlab);
         }
-    }    
+    }
+    
+    private void menuFileSaveTree_actionPerformed(ActionEvent evt) {
+        tagTree.saveTree();
+    }
+    
+    private void menuFileLoadTree_actionPerformed(ActionEvent evt) {
+        tagTree.loadTree();
+    }
+
     private void menuFileExit_actionPerformed(ActionEvent evt) {
         System.exit(0);
+    }
+    
+    private void menuEditAdd_actionPerformed(ActionEvent evt) {
+        tagTree.addTags();
+    }
+    
+    private void menuEditChange_actionPerformed(ActionEvent evt) {
+        tagTree.removeTags();
     }
 
     private void menuFileClear_actionPerformed(ActionEvent evt) {
         jlab.setIcon(null);
     }
-    
-    private void menuHelpAbout_actionPerformed(ActionEvent evt){
-        JOptionPane verisonInfo = new JOptionPane();
+
+    private void menuHelpAbout_actionPerformed(ActionEvent evt) {
+        JOptionPane versionInfo = new JOptionPane();
         versionInfo.showMessageDialog(frame, "Imago Inspectoris\n"
                 + "Version 1.0\n"
                 + "Published 24/04/2015 by 0506344");
     }
+
 //Main
     public static void main(String[] args) throws InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
         try { //Builds the window, using Windows look and feel
@@ -192,10 +228,10 @@ public class ImagoInspectoris extends javax.swing.JFrame{
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex){ //Error handling 
+        } catch (ClassNotFoundException ex) { //Error handling 
             System.out.println("Look and feel not found!");
         }
-        
+
         //Instantiates the ImagoInspectoris class and displays the frame
         ImagoInspectoris mainFrame = new ImagoInspectoris();
         mainFrame.setVisible(true);
@@ -204,10 +240,9 @@ public class ImagoInspectoris extends javax.swing.JFrame{
     private JPanel topPanel;
     private JMenuBar menuBar;
     private JMenu menuFile, menuEdit, menuHelp;
-    private JMenuItem menuFileOpen, menuFileSave, menuFileSaveAs, menuFileExit, menuHelpManual,
+    private JMenuItem menuFileOpen, menuFileSaveTree, menuFileLoadTree, menuFileSaveAs, menuFileExit, menuHelpManual,
             menuHelpAbout, menuFileClear, menuEditAdd, menuEditDelete, menuEditChange;
     private JScrollPane picViewer, treeViewer;
     private JOptionPane versionInfo;
-    private JTree tagTree;
-
+    private tagTree tagTree;
 }
