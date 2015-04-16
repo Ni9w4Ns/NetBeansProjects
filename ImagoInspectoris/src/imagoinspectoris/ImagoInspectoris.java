@@ -8,7 +8,7 @@ import javax.swing.GroupLayout.*;
  /*
  * @author 0506344
  */
-public class ImagoInspectoris extends javax.swing.JFrame {
+public class ImagoInspectoris extends JFrame {
 
     private Component frame;
 // implements ActionListener {
@@ -34,18 +34,20 @@ public class ImagoInspectoris extends javax.swing.JFrame {
 
 
         //set the layout
-        GroupLayout layout = new GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(treeViewer, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(treeViewer, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(picViewer, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)));
+                .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(picViewer)
-                .addComponent(treeViewer));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+            .addComponent(treeViewer, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
 
         pack();
 
@@ -137,7 +139,6 @@ public class ImagoInspectoris extends javax.swing.JFrame {
         });
         menuBar.add(menuHelp);
     }
-
     //Helper method to create Menu Items
     public JMenuItem CreateMenuItem(JMenu menu, int iType, String sText,
             ImageIcon image, int acceleratorKey, String sToolTip) {
@@ -171,6 +172,7 @@ public class ImagoInspectoris extends javax.swing.JFrame {
 
         return menuItem;
     }
+   
     //Action Listeners for each button in the menus
     JLabel jlab = new JLabel();
 
