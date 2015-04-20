@@ -2,16 +2,30 @@ package imagoinspectoris;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
-import javax.swing.GroupLayout.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
- /*
+/*
  * @author 0506344
  */
-public class ImagoInspectoris extends JFrame {
+public class ImagoInspectoris extends JFrame{
 
+    //declarations
+    private JPanel topPanel;
+    private JMenuBar menuBar;
+    private JMenu menuFile, menuEdit, menuHelp;
+    private JMenuItem menuFileOpen, menuFileSaveTree, menuFileLoadTree, menuFileSaveAs, menuFileExit, menuHelpManual,
+            menuHelpAbout, menuFileClear, menuEditAdd, menuEditDelete, menuEditChange;
+    private JButton tbAddTag, tbChangeTag, tbDeleteTag, tbOpenPic;
+    private JScrollPane treeViewer;
+    private picViewer picViewer;
+    private tagTree tagTree;
+    private File file;
+    private Image img;
+    private JToolBar toolbar;
+    
     private Component frame;
-// implements ActionListener {
 
     public ImagoInspectoris() {
         Components();
@@ -20,42 +34,37 @@ public class ImagoInspectoris extends JFrame {
     private void Components() {
 
         // set up the viewer itself with alignment for the various parts
-        picViewer = new JScrollPane();
+        setTitle("Imago Inspectoris v1.0");
+        setSize(450,450);
+        topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout());
+        add(topPanel);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        picViewer = new picViewer();
         tagTree = new tagTree();
         treeViewer = new JScrollPane(tagTree.tree);
-
-
-        setTitle("Imago Inspectoris v1.0");
-        setSize(850, 650);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         //initialise the tree viewer
         treeViewer.setViewportView(tagTree.tree);
 
-
         //set the layout
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(treeViewer, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(picViewer, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
-            .addComponent(treeViewer, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-
+        JScrollPane scrollPane1 = new JScrollPane(picViewer, 
+                                        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        this.add(scrollPane1, BorderLayout.CENTER);
+        picViewer.setPreferredSize(new Dimension(450, 450));
+                JScrollPane scrollPane2 = new JScrollPane(treeViewer, 
+                                        JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        this.add(scrollPane2, BorderLayout.WEST);
+        treeViewer.setPreferredSize(new Dimension(150, 450));
         pack();
 
         //set up the menu bar
-
         menuBar = new JMenuBar();
 
         setJMenuBar(menuBar);
+        this.add(topPanel, BorderLayout.NORTH);
 
         //The File Menu
         menuFile = new JMenu("File");
@@ -75,7 +84,7 @@ public class ImagoInspectoris extends JFrame {
                 menuFileSaveTree_actionPerformed(evt);
             }
         });
-        
+
         menuFileLoadTree = CreateMenuItem(menuFile, 0, "Load Tree", null, KeyEvent.VK_L, "Load saved tags");
         menuFileLoadTree.addActionListener(new ActionListener() {
             @Override
@@ -115,15 +124,14 @@ public class ImagoInspectoris extends JFrame {
             }
         });
         menuEditDelete = CreateMenuItem(menuEdit, 0, "Delete Tag", null, KeyEvent.VK_D, "Delete an existing tag");
-        menuEditDelete.addActionListener(new ActionListener(){
-          @Override
-          public void actionPerformed(ActionEvent evt) {
-              menuEditChange_actionPerformed(evt);
-          }
+        menuEditDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuEditChange_actionPerformed(evt);
+            }
         });
-        
-        menuBar.add(menuEdit);
 
+        menuBar.add(menuEdit);
 
         //The Help Menu
         menuHelp = new JMenu("Help");
@@ -138,8 +146,52 @@ public class ImagoInspectoris extends JFrame {
             }
         });
         menuBar.add(menuHelp);
+        
+        //A toolbar to add/remove/change tags
+        
+        toolbar = new JToolBar();
+        
+        tbAddTag = addToolBarButton(toolbar, false, "Add Tag", "addTag", 
+                "Add a tag to the selected picture");
+        tbAddTag.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuEditAdd_actionPerformed(evt);
+            }
+        });
+        tbChangeTag = addToolBarButton(toolbar, false, "Change Tag", "changeTag", 
+                "Change the selected tag");
+        tbChangeTag.addActionListener(new ActionListener() {
+           @Override
+           public void actionPerformed(ActionEvent evt){
+               toolbarChangeTag_actionPerformed(evt);
+           }
+        });
+        
+        tbOpenPic = addToolBarButton(toolbar, false, "Open Picture", "openPic",
+                "Open the selected picture from your album");
+        tbOpenPic.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                toolbarOpenPic_actionPerformed(evt);
+            }
+        });
+        tbDeleteTag = addToolBarButton(toolbar, false, "Delete Tag", "deleteTag",
+                "Delete the selected tag");
+        tbDeleteTag.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                menuEditChange_actionPerformed(evt);
+            }
+        });
+        JTextField tagText = new JTextField(30);
+        toolbar.add(tagText);
+        tagTree.setTagText(tagText);
+        topPanel.add(toolbar, BorderLayout.NORTH);
     }
+    
     //Helper method to create Menu Items
+
     public JMenuItem CreateMenuItem(JMenu menu, int iType, String sText,
             ImageIcon image, int acceleratorKey, String sToolTip) {
 
@@ -172,28 +224,80 @@ public class ImagoInspectoris extends JFrame {
 
         return menuItem;
     }
-   
-    //Action Listeners for each button in the menus
-    JLabel jlab = new JLabel();
+    
+    //Helper method for toolbar buttons
+    
+    public JButton addToolBarButton(JToolBar toolbar, boolean useImage, String buttonText,
+            String buttonName, String toolTipText){
+    
+    JButton b;
+    
+    if (useImage){
+        b = new JButton(new ImageIcon (buttonName + ".gif."));
+    }else{
+        b = new JButton();
+    }
+    
+    toolbar.add(b);
+    
+    if(buttonText != null){
+        b.setText(buttonText);
+    }else{
+        b.setMargin(new Insets (0,0,0,0));
+    }
+    
+    if (toolTipText != null)
+        b.setToolTipText(toolTipText);
+    
+    b.setActionCommand("Toolbar:" + buttonName);
+    
+    return b;
+    }
 
-    private void menuFileOpen_actionPerformed(ActionEvent evt) {
-        JFileChooser jfc = new JFileChooser();
+    //Methods for opening files 
+    
+     private class picViewer extends JPanel{
+        public void paint(Graphics g){
+            g.drawImage(img, 0, 0, this);
+        }
 
-        if (jfc.showOpenDialog(menuFile) == JFileChooser.APPROVE_OPTION) {
-            java.io.File f = jfc.getSelectedFile();
-
-            jlab.setIcon(new ImageIcon(f.toString()));
-
-            jlab.setHorizontalAlignment(JLabel.CENTER);
-
-            picViewer.getViewport().add(jlab);
+        private void clearImage(Graphics g) {
+            
         }
     }
     
-    private void menuFileSaveTree_actionPerformed(ActionEvent evt) {
-        tagTree.saveTree();
+    public String getFile() {
+        String directory = System.getProperty("user.home");
+        FileNameExtensionFilter images = new FileNameExtensionFilter("Image files only (.gif, .jpeg, .png, .jpg)",
+                "jpg", "jpeg", "png", "gif");
+        JFileChooser jfc = new JFileChooser(directory + "\\My Pictures");
+        jfc.setFileFilter(images);
+        jfc.setAcceptAllFileFilterUsed(false);
+        int result = jfc.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            this.file = jfc.getSelectedFile();
+            return file.getPath();
+        } else {
+            return null;
+        }
     }
-    
+    //Action Listeners for each button in the menus
+ 
+    public void menuFileOpen_actionPerformed(ActionEvent evt) {
+        String file = getFile();
+        if (file != null){
+            Toolkit myToolKit = Toolkit.getDefaultToolkit();
+            img = myToolKit.getImage(file);
+            img = img.getScaledInstance(350, -1, Image.SCALE_SMOOTH);
+            this.repaint();
+        }
+    }
+      
+    private void menuFileSaveTree_actionPerformed(ActionEvent evt) {
+        tagTree.saveTreeButton();
+    }
+
     private void menuFileLoadTree_actionPerformed(ActionEvent evt) {
         tagTree.loadTree();
     }
@@ -202,17 +306,31 @@ public class ImagoInspectoris extends JFrame {
         System.exit(0);
     }
     
+    private void toolbarOpenPic_actionPerformed(ActionEvent evt){
+        String file = getFile();
+        if (file != null){
+            Toolkit myToolkit = Toolkit.getDefaultToolkit();
+            img = myToolkit.getImage(file);
+            img = img.getScaledInstance(350, -1, Image.SCALE_DEFAULT);
+            this.repaint();
+        }
+    }
+    
+    private void toolbarChangeTag_actionPerformed(ActionEvent evt){
+        tagTree.changeTags();
+    }
+
     private void menuEditAdd_actionPerformed(ActionEvent evt) {
         tagTree.addTags();
     }
-    
+
     private void menuEditChange_actionPerformed(ActionEvent evt) {
         tagTree.removeTags();
     }
 
     private void menuFileClear_actionPerformed(ActionEvent evt) {
-        jlab.setIcon(null);
-    }
+        this.removeAll();
+        }  
 
     private void menuHelpAbout_actionPerformed(ActionEvent evt) {
         JOptionPane versionInfo = new JOptionPane();
@@ -238,13 +356,5 @@ public class ImagoInspectoris extends JFrame {
         ImagoInspectoris mainFrame = new ImagoInspectoris();
         mainFrame.setVisible(true);
     }
-    //declarations
-    private JPanel topPanel;
-    private JMenuBar menuBar;
-    private JMenu menuFile, menuEdit, menuHelp;
-    private JMenuItem menuFileOpen, menuFileSaveTree, menuFileLoadTree, menuFileSaveAs, menuFileExit, menuHelpManual,
-            menuHelpAbout, menuFileClear, menuEditAdd, menuEditDelete, menuEditChange;
-    private JScrollPane picViewer, treeViewer;
-    private JOptionPane versionInfo;
-    private tagTree tagTree;
+
 }
